@@ -1,17 +1,21 @@
 #' Helper Function to Scale Data in Dataframe
 #'
-#' @param df a data.frame
+#' @param df A data.frame
 #'
-#' @return scaled df
-#' @keywords internal
+#' @useDynLib lloydr, .registration = TRUE
+#' @import Rcpp
+#' @export
 #'
+#' @return A scaled df
+#'
+#'@keywords internal
 .data_scaler_helper <- function(df) {
 
   numeric_cols <- sapply(df, is.numeric)
   #checks if columns are numeric
-  scaled_df <- scale_df(df, numeric_cols)
+  standardised_data <- scale_df(df, numeric_cols)
   #applies the CPP scaling function
-
   #returns scaled dataframe
-  return(scaled_df)
+  return(standardised_data)
 }
+

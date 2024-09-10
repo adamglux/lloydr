@@ -7,10 +7,10 @@
 .data_scaler_helper(df)
 }
 \arguments{
-\item{df}{a data.frame}
+\item{df}{A data.frame}
 }
 \value{
-scaled df
+A scaled df
 }
 \description{
 Helper Function to Scale Data in Dataframe
