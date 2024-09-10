@@ -1,5 +1,5 @@
 
-#' Title
+#' Select Metrics helper
 #'
 #' @param distance desired distance (as string)
 #' @param data dataframe

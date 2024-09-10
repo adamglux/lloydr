@@ -14,8 +14,6 @@ calculate_clusters(df, k, distance, max.iter = 100)
 \item{distance}{A distance measure}
 
 \item{max.iter}{Set maximum iterations for convergence}
-
-\item{set.seed}{Set a random seed, default is none (FALSE)}
 }
 \value{
 CHANGE THIS
