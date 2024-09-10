@@ -12,13 +12,15 @@
 #'
 #'@keywords internal
 #'
-.assign_clusters <- function(data, centroids, distance_func) {
-  cluster_assignments <- numeric(nrow(data))
+.assign_clusters <- function(distance_matrix, centroids_indices) {
+    cluster_assignments <- numeric(nrow(distance_matrix))
 
-  for (i in 1:nrow(data)) {
-    distances <- apply(centroids, 1, function(centroid) distance_func(data[i, ], centroid))
-    cluster_assignments[i] <- which.min(distances)
+    # Only use the distance rows corresponding to centroids
+    centroids_distances <- distance_matrix[, centroids_indices]
+
+    for (i in 1:nrow(distance_matrix)) {
+      cluster_assignments[i] <- which.min(centroids_distances[i, ])
+    }
+
+    return(cluster_assignments)
   }
-
-  return(cluster_assignments)
-}
