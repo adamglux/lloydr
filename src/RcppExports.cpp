@@ -10,69 +10,73 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// cosine_distances
-NumericMatrix cosine_distances(NumericMatrix data);
-RcppExport SEXP _lloydr_cosine_distances(SEXP dataSEXP) {
+// cosine_distance_cpp
+double cosine_distance_cpp(NumericVector point, NumericVector centroid);
+RcppExport SEXP _lloydr_cosine_distance_cpp(SEXP pointSEXP, SEXP centroidSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type point(pointSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type centroid(centroidSEXP);
+    rcpp_result_gen = Rcpp::wrap(cosine_distance_cpp(point, centroid));
+    return rcpp_result_gen;
+END_RCPP
+}
+// euclidean_distance_cpp
+double euclidean_distance_cpp(NumericVector point, NumericVector centroid);
+RcppExport SEXP _lloydr_euclidean_distance_cpp(SEXP pointSEXP, SEXP centroidSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type point(pointSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type centroid(centroidSEXP);
+    rcpp_result_gen = Rcpp::wrap(euclidean_distance_cpp(point, centroid));
+    return rcpp_result_gen;
+END_RCPP
+}
+// gower_distance_cpp
+double gower_distance_cpp(NumericVector point, NumericVector centroid, NumericMatrix data);
+RcppExport SEXP _lloydr_gower_distance_cpp(SEXP pointSEXP, SEXP centroidSEXP, SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type point(pointSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type centroid(centroidSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(gower_distance_cpp(point, centroid, data));
+    return rcpp_result_gen;
+END_RCPP
+}
+// manhattan_distance_cpp
+double manhattan_distance_cpp(NumericVector point, NumericVector centroid);
+RcppExport SEXP _lloydr_manhattan_distance_cpp(SEXP pointSEXP, SEXP centroidSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type point(pointSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type centroid(centroidSEXP);
+    rcpp_result_gen = Rcpp::wrap(manhattan_distance_cpp(point, centroid));
+    return rcpp_result_gen;
+END_RCPP
+}
+// scale_data
+NumericMatrix scale_data(NumericMatrix data);
+RcppExport SEXP _lloydr_scale_data(SEXP dataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(cosine_distances(data));
-    return rcpp_result_gen;
-END_RCPP
-}
-// euclidean_distances
-NumericMatrix euclidean_distances(NumericMatrix data);
-RcppExport SEXP _lloydr_euclidean_distances(SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(euclidean_distances(data));
-    return rcpp_result_gen;
-END_RCPP
-}
-// gower_distances
-NumericMatrix gower_distances(NumericMatrix data);
-RcppExport SEXP _lloydr_gower_distances(SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(gower_distances(data));
-    return rcpp_result_gen;
-END_RCPP
-}
-// manhattan_distances
-NumericMatrix manhattan_distances(NumericMatrix data);
-RcppExport SEXP _lloydr_manhattan_distances(SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(manhattan_distances(data));
-    return rcpp_result_gen;
-END_RCPP
-}
-// scale_df
-DataFrame scale_df(DataFrame data, LogicalVector is_numeric);
-RcppExport SEXP _lloydr_scale_df(SEXP dataSEXP, SEXP is_numericSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type is_numeric(is_numericSEXP);
-    rcpp_result_gen = Rcpp::wrap(scale_df(data, is_numeric));
+    rcpp_result_gen = Rcpp::wrap(scale_data(data));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lloydr_cosine_distances", (DL_FUNC) &_lloydr_cosine_distances, 1},
-    {"_lloydr_euclidean_distances", (DL_FUNC) &_lloydr_euclidean_distances, 1},
-    {"_lloydr_gower_distances", (DL_FUNC) &_lloydr_gower_distances, 1},
-    {"_lloydr_manhattan_distances", (DL_FUNC) &_lloydr_manhattan_distances, 1},
-    {"_lloydr_scale_df", (DL_FUNC) &_lloydr_scale_df, 2},
+    {"_lloydr_cosine_distance_cpp", (DL_FUNC) &_lloydr_cosine_distance_cpp, 2},
+    {"_lloydr_euclidean_distance_cpp", (DL_FUNC) &_lloydr_euclidean_distance_cpp, 2},
+    {"_lloydr_gower_distance_cpp", (DL_FUNC) &_lloydr_gower_distance_cpp, 3},
+    {"_lloydr_manhattan_distance_cpp", (DL_FUNC) &_lloydr_manhattan_distance_cpp, 2},
+    {"_lloydr_scale_data", (DL_FUNC) &_lloydr_scale_data, 1},
     {NULL, NULL, 0}
 };
 

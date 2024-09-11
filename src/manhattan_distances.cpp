@@ -2,26 +2,14 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericMatrix manhattan_distances(NumericMatrix data) {
-  // taxicab distances
-  // see euclidean_distance for more set up details
+double manhattan_distance_cpp(NumericVector point, NumericVector centroid) {
+  //pass in a set of points and centroids
 
-  int n = data.nrow();
-  NumericMatrix dist_matrix(n, n);
-
-  for (int i = 0; i < n; ++i) {
-    for (int j = i + 1; j < n; ++j) {
-      double sum = 0.0;
-      for (int k = 0; k < data.ncol(); ++k) {
-        sum += fabs(data(i, k) - data(j, k));
-        // fabs(data(i, k) - data(j, k)) to calculate the absolute difference
-      }
-      dist_matrix(i, j) = sum;
-      dist_matrix(j, i) = dist_matrix(i, j);
-    }
+  double sum = 0.0; //initialise sum vector
+  for (int i = 0; i < point.size(); ++i) {
+    //iterate over num points
+    sum += std::abs(point[i] - centroid[i]);
+    //distance is the absolute value of the difference
   }
-
-  // Manhattan distance: sum of the absolute differences b/w two points’ features
-
-  return dist_matrix;
+  return sum;
 }

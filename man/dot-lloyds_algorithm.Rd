@@ -4,7 +4,7 @@
 \alias{.lloyds_algorithm}
 \title{Lloyd's Algorithm}
 \usage{
-.lloyds_algorithm(data, k, distance_func, max_iters = max_iters, tol = 1e-04)
+.lloyds_algorithm(data, k, distance_func, max_iters, tol = 1e-04)
 }
 \arguments{
 \item{data}{data frame}

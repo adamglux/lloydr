@@ -13,9 +13,14 @@
 #'@keywords internal
 .recalculate_centroids <- function(data, cluster_assignments, k) {
   centroids <- matrix(NA, nrow = k, ncol = ncol(data))
-
-  for (j in 1:k) {
-    centroids[j, ] <- base::colMeans(data[cluster_assignments == j, , drop = FALSE], na.rm = TRUE)
+  for (i in 1:k) {
+    cluster_points <- data[cluster_assignments == i, , drop = FALSE]
+    if (nrow(cluster_points) > 0) {
+      centroids[i, ] <- base::colMeans(cluster_points)
+    } else {
+      # Handle empty cluster case
+      centroids[i, ] <- data[sample(1:nrow(data), 1), ]
+    }
   }
   return(centroids)
 }

@@ -2,25 +2,29 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericMatrix gower_distances(NumericMatrix data) {
-  // see euclidean_distance for more set up details
+double gower_distance_cpp(NumericVector point, NumericVector centroid, NumericMatrix data) {
+  //the overall similarity, S, between two objects is the weighted average
+  // of the similarities calculated for all their descriptors (Wikipedia)
 
-  int n = data.nrow();
-  NumericMatrix dist_matrix(n, n);
+  //this is version 1, but a more comprehensive version is implemented using library(StatMatch) in R
 
+  int n = point.size();
+  double sum = 0.0;
+
+  // Calculate the range of each feature for normalization
+  NumericVector ranges(n);
   for (int i = 0; i < n; ++i) {
-    for (int j = i + 1; j < n; ++j) {
-      double sum = 0.0;
-      for (int k = 0; k < data.ncol(); ++k) {
-        sum += fabs(data(i, k) - data(j, k)) / (max(data(_, k)) - min(data(_, k)));
-        // fabs() returns absolute value of the difference between points
-        // max(data(_, k)) and min(data(_, k)) calculates the range of values for each feature
-        // used to normalize the distance
-      }
-      dist_matrix(i, j) = sum / data.ncol();
-      dist_matrix(j, i) = dist_matrix(i, j);
+    double col_min = min(data(_, i));
+    double col_max = max(data(_, i));
+    ranges[i] = col_max - col_min;
+  }
+
+  // Calculate normalized distances for numeric values
+  for (int i = 0; i < n; ++i) {
+    if (ranges[i] > 0) {
+      sum += std::abs(point[i] - centroid[i]) / ranges[i];
     }
   }
 
-  return dist_matrix;
+  return sum / n;  // Average distance
 }

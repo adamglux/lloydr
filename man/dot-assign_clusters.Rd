@@ -4,7 +4,7 @@
 \alias{.assign_clusters}
 \title{Assign Clusters helper function}
 \usage{
-.assign_clusters(data, centroids, distance_func)
+.assign_clusters(distance_matrix, centroids_indices)
 }
 \arguments{
 \item{data}{dataframe}
