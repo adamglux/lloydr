@@ -4,18 +4,18 @@
 \alias{.lloyds_algorithm}
 \title{Lloyd's Algorithm}
 \usage{
-.lloyds_algorithm(data, k, distance_func, max_iters, tol = 1e-04)
+.lloyds_algorithm(data, k, distance_metric, max_iters = 100, tol = 1e-04)
 }
 \arguments{
-\item{data}{data frame}
+\item{data}{distance matrix}
 
 \item{k}{num of clusters}
-
-\item{distance_func}{distance metric}
 
 \item{max_iters}{max iterations}
 
 \item{tol}{tolerance}
+
+\item{distance_func}{distance metric}
 }
 \value{
 vector of cluster assignments

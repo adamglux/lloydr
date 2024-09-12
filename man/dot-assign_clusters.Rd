@@ -4,14 +4,12 @@
 \alias{.assign_clusters}
 \title{Assign Clusters helper function}
 \usage{
-.assign_clusters(distance_matrix, centroids_indices)
+.assign_clusters(data, centroids, distance_function)
 }
 \arguments{
-\item{data}{dataframe}
+\item{distance_matrix}{a matrix of distances}
 
-\item{centroids}{matrix of centroids}
-
-\item{distance_func}{distance function}
+\item{centroids_indices}{matrix of centroids}
 }
 \value{
 vector of cluster assignments

@@ -4,7 +4,7 @@
 \alias{calculate_clusters}
 \title{Calculate Clusters}
 \usage{
-calculate_clusters(df, k, distance, max.iter = 100)
+calculate_clusters(df, k, distance, max.iter = 100, tol = 1e-04, scale = TRUE)
 }
 \arguments{
 \item{df}{A dataframe}

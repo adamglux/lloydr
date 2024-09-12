@@ -1,15 +1,13 @@
 #' Title
 #'
-#' @param point
-#' @param centroid
-#' @param metric
-#' @param distance_matrix
+#' @param point points from matrix
+#' @param centroid cetroid matrix
+#' @param metric type of distance
 #'
 #' @return matrix
 #' @export
 #'
-#' @examples
-#'
+
 .distance_to_centroid <- function(point, centroid, metric) {
   if (metric == "euclidean") {
     return(euclidean_distance_cpp(point, centroid))
@@ -18,7 +16,7 @@
   } else if (metric == "cosine") {
     return(cosine_distance_cpp(point, centroid))
   } else if (metric == "gower") {
-    return(gower_distance_cpp(point, centroid, data))
+    return(gower_distance(point, centroid))
   } else {
     stop("Unsupported metric")
   }
