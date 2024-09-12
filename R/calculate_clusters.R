@@ -4,12 +4,22 @@
 #' @param k an integer number of clusters
 #' @param distance A distance measure
 #' @param max.iter Set maximum iterations for convergence
+#' @param tol tolerance
+#' @param scale scale data y/n
 #'
+#' @useDynLib lloydr, .registration = TRUE
 #' @return CHANGE THIS
 #' @import Rcpp
 #' @export
 #'
 #' @examples
+#'
+#'
+#'
+#'
+#' @return matrix of cetroids
+#'
+#'@keywords internal
 #' sum(1:10)
 calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scale = TRUE) {
   ##TO DO: add more input validation

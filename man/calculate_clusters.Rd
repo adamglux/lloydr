@@ -14,13 +14,18 @@ calculate_clusters(df, k, distance, max.iter = 100, tol = 1e-04, scale = TRUE)
 \item{distance}{A distance measure}
 
 \item{max.iter}{Set maximum iterations for convergence}
+
+\item{tol}{tolerance}
+
+\item{scale}{scale data y/n}
 }
 \value{
 CHANGE THIS
+
+matrix of cetroids
 }
 \description{
 Calculate Clusters
 }
-\examples{
-sum(1:10)
-}
+\keyword{internal}
+\keyword{sum(1:10)}

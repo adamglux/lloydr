@@ -6,7 +6,6 @@
 #'
 #' @useDynLib lloydr, .registration = TRUE
 #' @import Rcpp
-#' @export
 #'
 #' @return calculated distances
 #'
@@ -16,19 +15,19 @@
 .metrics_function <- function(metric, data) {
   ### TO DO: make the metric all lowercase
   if(metric == "euclidean") {
-    distances <- euclidean_distances(data)
+    distances <- euclidean_distance_cpp(data)
   }
 
   if(metric == "manhattan") {
-    distances <- manhattan_distances(data)
+    distances <- manhattan_distance_cpp(data)
   }
 
   if(metric == "cosine") {
-    distances <- cosine_distances(data)
+    distances <- cosine_distance_cpp(data)
   }
 
   if(metric == "gower") {
-    distances <- gower_distances(data)
+    distances <- .gower_distance(data)
   }
 
   return(distances)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dist_to_centroid_helper.R
 \name{.distance_to_centroid}
 \alias{.distance_to_centroid}
-\title{Title}
+\title{Distance to Centroids}
 \usage{
 .distance_to_centroid(point, centroid, metric)
 }
@@ -13,9 +13,6 @@
 
 \item{metric}{type of distance}
 }
-\value{
-matrix
-}
 \description{
-Title
+Distance to Centroids
 }

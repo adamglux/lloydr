@@ -6,7 +6,6 @@
 #'
 #' @useDynLib lloydr, .registration = TRUE
 #' @import Rcpp
-#' @export
 #'
 #' @return matrix of cetroids
 #'

@@ -5,7 +5,6 @@
 #'
 #' @useDynLib lloydr, .registration = TRUE
 #' @import Rcpp
-#' @export
 #'
 #' @return vector of cluster assignments
 #'
