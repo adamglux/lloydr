@@ -6,7 +6,7 @@
 #'
 #' @useDynLib lloydr, .registration = TRUE
 #' @import Rcpp
-#'
+#' @keywords internal
 
 .distance_to_centroid <- function(point, centroid, metric) {
   if (metric == "euclidean") {

@@ -21,11 +21,14 @@ calculate_clusters(df, k, distance, max.iter = 100, tol = 1e-04, scale = TRUE)
 }
 \value{
 CHANGE THIS
-
-matrix of cetroids
 }
 \description{
 Calculate Clusters
 }
-\keyword{internal}
-\keyword{sum(1:10)}
+\examples{
+data <- mtcars
+cluster_values <- calculate_clusters(data,3,"euclidean")
+print(cluster_values)
+
+
+}

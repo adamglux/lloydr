@@ -46,7 +46,6 @@
     if (is.na(centroid_shift)) {
       warning("Centroid shift resulted in NA, likely due to missing or empty data in centroids.")
     } else if (centroid_shift < tol) {
-      cat("Converged in", iter, "iterations\n")
       break
     }
 

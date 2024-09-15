@@ -16,3 +16,4 @@
 \description{
 Distance to Centroids
 }
+\keyword{internal}

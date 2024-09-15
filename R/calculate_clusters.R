@@ -13,15 +13,15 @@
 #' @export
 #'
 #' @examples
+#' data <- mtcars
+#' cluster_values <- calculate_clusters(data,3,"euclidean")
+#' print(cluster_values)
 #'
 #'
-#'
-#'
-#' @return matrix of cetroids
-#'
-#'@keywords internal
-#' sum(1:10)
 calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scale = TRUE) {
+  #correct capitalisation in distance
+  distance <- tolower(distance)
+
   ##TO DO: add more input validation
   if (!is.data.frame(df)) stop("Input must be a data frame.")
   if (!is.numeric(k) || k <= 0) stop("k must be a positive integer.")
@@ -40,17 +40,44 @@ calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scal
   } else {scaled.data <- matrix.from.data}
   #if scale is set to false, then use the data matrix as-is w/o scaling
 
-
-  #give it a distance matrix
-  #distance.matrix <- .metrics_function(distance, scaled.data)
-
   #do the lloyds
   clusters.by.lloyd <- .lloyds_algorithm(scaled.data, k, distance, max_iters = max.iter, tol = tol)
 
-  #TO DO: fix this return
-  return(list(cluster_assignments = clusters.by.lloyd$cluster_assignments,
-              centroids = clusters.by.lloyd$centroids,
-              scaled_data = scaled.data,
-              iterations = clusters.by.lloyd$iterations))
+  #calc sum of squares
+  totss <- sum((scaled.data - rowMeans(scaled.data))^2)
+
+  #calc within sum of squares
+  tot.withinss <- sum(sapply(1:k, function(i) sum((scaled.data[clusters.by.lloyd$cluster_assignments == i, ] - clusters.by.lloyd$centroids[i, ])^2)))
+  withinss <-  sapply(1:k, function(i) sum((scaled.data[clusters.by.lloyd$cluster_assignments == i, ] - clusters.by.lloyd$centroids[i, ])^2))
+
+
+  # result <- list(
+  #   cluster_assignments = clusters.by.lloyd$cluster_assignments,
+  #   centroids = clusters.by.lloyd$centroids,
+  #   scaled_data = scaled.data,
+  #   iterations = clusters.by.lloyd$iterations,
+  #   distance = distance,
+  #   k = k
+  # )
+
+  #print out convergence
+  #cat("Converged in", clusters.by.lloyd$iterations, "iterations\n")
+
+  result <- list(
+    cluster = clusters.by.lloyd$cluster_assignments,
+    centers = clusters.by.lloyd$centroids,
+    totss = totss,
+    withinss = withinss,
+    tot.withinss = tot.withinss,
+    betweenss = totss - tot.withinss,
+    size = table(clusters.by.lloyd$cluster_assignments),
+    iterations = clusters.by.lloyd$iterations,
+    metric = distance,
+    dataset = scaled.data
+  )
+  #structure(result, class = c("kmeans", "kmeans_custom"))
+
+  class(result) <- c( "kmeans_custom", "kmeans") #"kmeans_custom" #
+  return(result)
 
 }
