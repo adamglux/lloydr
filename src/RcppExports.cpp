@@ -22,6 +22,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cosine_point_distances
+NumericMatrix cosine_point_distances(NumericMatrix data);
+RcppExport SEXP _lloydr_cosine_point_distances(SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(cosine_point_distances(data));
+    return rcpp_result_gen;
+END_RCPP
+}
 // euclidean_distance_cpp
 double euclidean_distance_cpp(NumericVector point, NumericVector centroid);
 RcppExport SEXP _lloydr_euclidean_distance_cpp(SEXP pointSEXP, SEXP centroidSEXP) {
@@ -31,6 +42,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type point(pointSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type centroid(centroidSEXP);
     rcpp_result_gen = Rcpp::wrap(euclidean_distance_cpp(point, centroid));
+    return rcpp_result_gen;
+END_RCPP
+}
+// euclidean_point_distances
+NumericMatrix euclidean_point_distances(NumericMatrix data);
+RcppExport SEXP _lloydr_euclidean_point_distances(SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(euclidean_point_distances(data));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -59,6 +81,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// manhattan_point_distances
+NumericMatrix manhattan_point_distances(NumericMatrix data);
+RcppExport SEXP _lloydr_manhattan_point_distances(SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(manhattan_point_distances(data));
+    return rcpp_result_gen;
+END_RCPP
+}
 // scale_data
 NumericMatrix scale_data(NumericMatrix data);
 RcppExport SEXP _lloydr_scale_data(SEXP dataSEXP) {
@@ -73,9 +106,12 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lloydr_cosine_distance_cpp", (DL_FUNC) &_lloydr_cosine_distance_cpp, 2},
+    {"_lloydr_cosine_point_distances", (DL_FUNC) &_lloydr_cosine_point_distances, 1},
     {"_lloydr_euclidean_distance_cpp", (DL_FUNC) &_lloydr_euclidean_distance_cpp, 2},
+    {"_lloydr_euclidean_point_distances", (DL_FUNC) &_lloydr_euclidean_point_distances, 1},
     {"_lloydr_gower_distance_cpp", (DL_FUNC) &_lloydr_gower_distance_cpp, 3},
     {"_lloydr_manhattan_distance_cpp", (DL_FUNC) &_lloydr_manhattan_distance_cpp, 2},
+    {"_lloydr_manhattan_point_distances", (DL_FUNC) &_lloydr_manhattan_point_distances, 1},
     {"_lloydr_scale_data", (DL_FUNC) &_lloydr_scale_data, 1},
     {NULL, NULL, 0}
 };

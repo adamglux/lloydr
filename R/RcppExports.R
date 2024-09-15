@@ -5,8 +5,16 @@ cosine_distance_cpp <- function(point, centroid) {
     .Call(`_lloydr_cosine_distance_cpp`, point, centroid)
 }
 
+cosine_point_distances <- function(data) {
+    .Call(`_lloydr_cosine_point_distances`, data)
+}
+
 euclidean_distance_cpp <- function(point, centroid) {
     .Call(`_lloydr_euclidean_distance_cpp`, point, centroid)
+}
+
+euclidean_point_distances <- function(data) {
+    .Call(`_lloydr_euclidean_point_distances`, data)
 }
 
 gower_distance_cpp <- function(point, centroid, data) {
@@ -15,6 +23,10 @@ gower_distance_cpp <- function(point, centroid, data) {
 
 manhattan_distance_cpp <- function(point, centroid) {
     .Call(`_lloydr_manhattan_distance_cpp`, point, centroid)
+}
+
+manhattan_point_distances <- function(data) {
+    .Call(`_lloydr_manhattan_point_distances`, data)
 }
 
 scale_data <- function(data) {

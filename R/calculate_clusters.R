@@ -50,15 +50,8 @@ calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scal
   tot.withinss <- sum(sapply(1:k, function(i) sum((scaled.data[clusters.by.lloyd$cluster_assignments == i, ] - clusters.by.lloyd$centroids[i, ])^2)))
   withinss <-  sapply(1:k, function(i) sum((scaled.data[clusters.by.lloyd$cluster_assignments == i, ] - clusters.by.lloyd$centroids[i, ])^2))
 
-
-  # result <- list(
-  #   cluster_assignments = clusters.by.lloyd$cluster_assignments,
-  #   centroids = clusters.by.lloyd$centroids,
-  #   scaled_data = scaled.data,
-  #   iterations = clusters.by.lloyd$iterations,
-  #   distance = distance,
-  #   k = k
-  # )
+  #append cluster assignments
+  data <- cbind(matrix.from.data, cluster = clusters.by.lloyd$cluster_assignments)
 
   #print out convergence
   #cat("Converged in", clusters.by.lloyd$iterations, "iterations\n")
@@ -73,7 +66,7 @@ calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scal
     size = table(clusters.by.lloyd$cluster_assignments),
     iterations = clusters.by.lloyd$iterations,
     metric = distance,
-    dataset = scaled.data
+    data = data
   )
   #structure(result, class = c("kmeans", "kmeans_custom"))
 

@@ -42,7 +42,7 @@ compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
      time_taken <- round(time_taken, 3)
 
      # Calculate Dunn index
-     dunn_index <- .dunn_index(clusters)
+     dunn_index <- .dunn_index(clusters, dist)
 
      # Fill the dataframe
      cluster_df[row_index, ] <- c(distance = dist,
