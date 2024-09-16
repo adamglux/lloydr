@@ -4,8 +4,7 @@ Title: Cluster Metrics Using Lloyd's Algorithm
 Version: 0.1.0
 Author: adam glux
 Maintainer: adam g. <glucksadam@myvuw.ac.nz>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: This package helps you perform kmeans clustering using Lloyd's Algorithm. You can choose from 4 different distance metrics, and compare their effectiveness. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -15,3 +14,7 @@ LinkingTo:
 Imports: 
     Rcpp,
     StatMatch
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
