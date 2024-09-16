@@ -1,0 +1,35 @@
+---
+title: "lloydr"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{lloydr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(lloydr)
+```
+
+# Introduction 
+
+This is where some introduction is going to go. Hi. 
+
+# Background 
+
+## Distance Measures 
+
+# Functions and Methods
+
+# Examples
+
+# Process
+
+
