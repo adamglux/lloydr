@@ -20,7 +20,17 @@ calculate_clusters(df, k, distance, max.iter = 100, tol = 1e-04, scale = TRUE)
 \item{scale}{scale data y/n}
 }
 \value{
-CHANGE THIS
+A list containing the following components:
+\item{cluster}{A vector of integers indicating the cluster assignment for each observation.}
+\item{centers}{A matrix of cluster centers.}
+\item{totss}{The total sum of squares.}
+\item{withinss}{The within-cluster sum of squares.}
+\item{tot.withinss}{The total within-cluster sum of squares.}
+\item{betweenss}{The between-cluster sum of squares.}
+\item{size}{The size of each cluster.}
+\item{iterations}{The number of iterations for convergence.}
+\item{metric}{The distance metric used.}
+\item{data}{The input data with cluster assignments appended.}
 }
 \description{
 Calculate Clusters

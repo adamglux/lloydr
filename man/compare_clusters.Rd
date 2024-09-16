@@ -2,24 +2,35 @@
 % Please edit documentation in R/compare_clusters.R
 \name{compare_clusters}
 \alias{compare_clusters}
-\title{Title}
+\title{Compare Clusters}
 \usage{
 compare_clusters(df, k, max.iter = 100, tol = 1e-04, scale = TRUE)
 }
 \arguments{
-\item{df}{a dataframe}
+\item{df}{A dataframe containing the data to be clustered.}
 
-\item{k}{a vector of desired clusters > 1}
+\item{k}{A vector of integers representing the desired number of clusters (must be > 1).}
 
-\item{max.iter}{maximum number of iterations to convergence}
+\item{max.iter}{An integer for the maximum number of iterations for convergence.}
 
-\item{tol}{distance tollerance}
+\item{tol}{A numeric value specifying the tolerance for convergence.}
 
-\item{scale}{TRUE = scale date; FALSE = do no scale data}
+\item{scale}{Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.}
 }
 \value{
-Dataframe comparing clusters
+A dataframe containing the following columns:
+\item{distance}{The distance metric used.}
+\item{k}{The number of clusters.}
+\item{time}{Time taken for the clustering process (in seconds).}
+\item{convergence}{The number of iterations to reach convergence.}
+\item{DUNN}{The Dunn index for the clustering result.}
 }
 \description{
-Title
+This function compares clustering results for different distance metrics and values of `k`.
+}
+\examples{
+
+data <- mtcars
+cluster_comparison <- compare_clusters(data, k = 2:4)
+print(cluster_comparison)
 }

@@ -5,6 +5,7 @@
 #'
 #' @useDynLib lloydr, .registration = TRUE
 #' @import Rcpp
+#' @importFrom StatMatch gower.dist
 #' @keywords internal
 
 .point_distances_helper <- function(metric, data) {

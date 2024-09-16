@@ -1,17 +1,26 @@
-
-#' Title
+#' Compare Clusters
 #'
-#' @param df a dataframe
-#' @param k a vector of desired clusters > 1
-#' @param max.iter maximum number of iterations to convergence
-#' @param tol distance tollerance
-#' @param scale TRUE = scale date; FALSE = do no scale data
-#'
+#' @description This function compares clustering results for different distance metrics and values of `k`.
+#' @param df A dataframe containing the data to be clustered.
+#' @param k A vector of integers representing the desired number of clusters (must be > 1).
+#' @param max.iter An integer for the maximum number of iterations for convergence.
+#' @param tol A numeric value specifying the tolerance for convergence.
+#' @param scale Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.
 #' @useDynLib lloydr, .registration = TRUE
-#' @return Dataframe comparing clusters
+#' @return A dataframe containing the following columns:
+#' \item{distance}{The distance metric used.}
+#' \item{k}{The number of clusters.}
+#' \item{time}{Time taken for the clustering process (in seconds).}
+#' \item{convergence}{The number of iterations to reach convergence.}
+#' \item{DUNN}{The Dunn index for the clustering result.}
 #' @import Rcpp
+#' @useDynLib lloydr, .registration = TRUE
 #' @export
+#' @examples
 #'
+#' data <- mtcars
+#' cluster_comparison <- compare_clusters(data, k = 2:4)
+#' print(cluster_comparison)
 
 compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
   distances <- c('euclidean', 'manhattan', 'cosine', 'gower')
@@ -42,7 +51,7 @@ compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
      time_taken <- round(time_taken, 3)
 
      # Calculate Dunn index
-     dunn_index <- .dunn_index(clusters, dist)
+     dunn_index <- round(.dunn_index(clusters, dist),5)
 
      # Fill the dataframe
      cluster_df[row_index, ] <- c(distance = dist,

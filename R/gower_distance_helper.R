@@ -5,7 +5,7 @@
 #' @param centroid centroid points
 #'
 #' @return numeric distance values
-#' @import StatMatch
+#' @importFrom StatMatch gower.dist
 #'
 #' @keywords internal
 .gower_distance <- function(point, centroid) {

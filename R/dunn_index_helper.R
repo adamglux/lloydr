@@ -18,7 +18,7 @@
   }
 
   # Inter-cluster distance: minimum distance between centroids
-  inter_centroid_dists <- as.matrix(dist(clusters$centers)) #.distance_to_centroid(clusters[i, ], centroids[j, ], distance_metric)#
+  inter_centroid_dists <- .point_distances_helper(metric, clusters$centers)# as.matrix(dist(clusters$centers)) #.distance_to_centroid(clusters[i, ], centroids[j, ], distance_metric)#
   min_inter_cluster_dist <- min(inter_centroid_dists[inter_centroid_dists > 0], na.rm = TRUE)
 
   # Dunn index
