@@ -41,7 +41,12 @@ compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
      start_time <- Sys.time()
 
      # Calculate clusters
-     clusters <- calculate_clusters(df = df, k = k_value, distance = dist, max.iter = max.iter, tol = tol, scale = scale)
+     clusters <- calculate_clusters(df = df,
+                                    k = k_value,
+                                    distance = dist,
+                                    max.iter = max.iter,
+                                    tol = tol,
+                                    scale = scale)
 
      #end time
      end_time <- Sys.time()
