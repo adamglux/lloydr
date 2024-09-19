@@ -23,6 +23,23 @@
 #' print(cluster_comparison)
 
 compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
+
+  ######## input validation
+  if (!is.data.frame(df)) stop("Input must be a data frame.")
+  if (!is.numeric(k) || k <= 0 || k%%1 !=0) stop("k must be a positive integer.")
+  if (!is.numeric(max.iter) || max.iter <= 0 || max.iter%%1 != 0) {
+    stop("max.iter must be a positive integer.")
+  }
+  if (!is.numeric(tol) || tol <= 0) {
+    stop("Tolerance must be a positive number.")
+  }
+
+  if (!is.logical(scale) || length(scale) != 1) {
+    stop("Scale paramter must be TRUE to scale data or FALSE to skip scalling.")
+  }
+
+  ########
+
   distances <- c('euclidean', 'manhattan', 'cosine', 'gower')
 
   combinations <- length(distances) * length(k)

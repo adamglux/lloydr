@@ -1,11 +1,11 @@
 #' Calculate Clusters
 #'
 #' @param df A dataframe
-#' @param k an integer number of clusters
+#' @param k an integer number of clusters (must be > 1)
 #' @param distance A distance measure
 #' @param max.iter Set maximum iterations for convergence
 #' @param tol tolerance
-#' @param scale scale data y/n
+#' @param scale Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.
 #'
 #' @useDynLib lloydr, .registration = TRUE
 #' @return A list containing the following components:
@@ -32,12 +32,25 @@ calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scal
   #correct capitalisation in distance
   distance <- tolower(distance)
 
-  ##TO DO: add more input validation
+  ####### Input validation
   if (!is.data.frame(df)) stop("Input must be a data frame.")
-  if (!is.numeric(k) || k <= 0) stop("k must be a positive integer.")
+  if (!is.numeric(k) || k <= 0 || k%%1 !=0) stop("k must be a positive integer.")
   if (!is.character(distance) || !(distance %in% c("euclidean", "manhattan", "cosine", "gower"))) {
     stop("Distance must be one of 'euclidean', 'manhattan', 'cosine', 'gower'.")
   }
+
+  if (!is.numeric(max.iter) || max.iter <= 0 || max.iter%%1 != 0) {
+    stop("max.iter must be a positive integer.")
+  }
+  if (!is.numeric(tol) || tol <= 0) {
+    stop("Tolerance must be a positive number.")
+  }
+
+  if (!is.logical(scale) || length(scale) != 1) {
+    stop("Scale paramter must be TRUE to scale data or FALSE to skip scalling.")
+  }
+
+  #######
 
   #turn data into number matrix
   matrix.from.data <- data.matrix(df)
@@ -63,8 +76,14 @@ calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scal
   #append cluster assignments
   data <- cbind(matrix.from.data, cluster = clusters.by.lloyd$cluster_assignments)
 
-  #print out convergence
-  #cat("Converged in", clusters.by.lloyd$iterations, "iterations\n")
+  # Check convergence and print iterations
+  if (clusters.by.lloyd$converged) {
+    #cat("Converged in", clusters.by.lloyd$iterations, "iterations\n")
+  } else {
+    message(c("Did not converge after ", max.iter, " iterations\n"))
+    return(NULL)
+    break
+  }
 
   result <- list(
     cluster = clusters.by.lloyd$cluster_assignments,

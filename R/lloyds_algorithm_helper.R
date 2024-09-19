@@ -22,6 +22,7 @@
 
   cluster_assignments <- numeric(nrow(data))
   prev_centroids <- centroids
+  converged <- FALSE
 
   for (iter in 1:max_iters) {
     # Step 1: Calculate the distance matrix between data points and centroids
@@ -45,7 +46,9 @@
 
     if (is.na(centroid_shift)) {
       warning("Centroid shift resulted in NA, likely due to missing or empty data in centroids.")
+      return(NULL)
     } else if (centroid_shift < tol) {
+      converged <- TRUE
       break
     }
 
@@ -54,7 +57,7 @@
   }
 
   # Return final cluster assignments, centroids, and number of iterations
-  return(list(cluster_assignments = cluster_assignments, centroids = centroids, iterations = iter))
+  return(list(cluster_assignments = cluster_assignments, centroids = centroids, iterations = iter, converged = converged))
 }
 
 
