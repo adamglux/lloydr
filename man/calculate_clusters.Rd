@@ -9,7 +9,7 @@ calculate_clusters(df, k, distance, max.iter = 100, tol = 1e-04, scale = TRUE)
 \arguments{
 \item{df}{A dataframe}
 
-\item{k}{an integer number of clusters}
+\item{k}{an integer number of clusters (must be > 1)}
 
 \item{distance}{A distance measure}
 
@@ -17,7 +17,7 @@ calculate_clusters(df, k, distance, max.iter = 100, tol = 1e-04, scale = TRUE)
 
 \item{tol}{tolerance}
 
-\item{scale}{scale data y/n}
+\item{scale}{Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.}
 }
 \value{
 A list containing the following components:

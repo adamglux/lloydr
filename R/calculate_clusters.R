@@ -34,7 +34,19 @@ calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scal
 
   ####### Input validation
   if (!is.data.frame(df)) stop("Input must be a data frame.")
-  if (!is.numeric(k) || k <= 0 || k%%1 !=0) stop("k must be a positive integer.")
+
+  if (length(k) > 1) {
+    stop ("k must be 1 value. \nA vector of values for k can be used in the lloydr::compare_clusters() function")
+  }
+
+  if (!is.numeric(k) || k <= 1 || k%%1 !=0){
+    stop("k must be a positive integer and > 1.")
+  }
+
+  if (k >= nrow(df)) {
+    stop("Number of clusters cannot exceed number of data points")
+  }
+
   if (!is.character(distance) || !(distance %in% c("euclidean", "manhattan", "cosine", "gower"))) {
     stop("Distance must be one of 'euclidean', 'manhattan', 'cosine', 'gower'.")
   }
@@ -80,9 +92,8 @@ calculate_clusters <- function(df, k, distance, max.iter = 100, tol = 1e-4, scal
   if (clusters.by.lloyd$converged) {
     #cat("Converged in", clusters.by.lloyd$iterations, "iterations\n")
   } else {
-    message(c("Did not converge after ", max.iter, " iterations\n"))
+    message(c("Did not converge after ", max.iter, " iterations.\nTry increasing max.iter or adjusting tolerance."))
     return(NULL)
-    break
   }
 
   result <- list(

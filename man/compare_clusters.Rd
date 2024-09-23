@@ -30,7 +30,8 @@ This function compares clustering results for different distance metrics and val
 }
 \examples{
 
-data <- mtcars
-cluster_comparison <- compare_clusters(data, k = 2:4)
+data <- data.frame(x = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)),
+                   y = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)))
+cluster_comparison <- compare_clusters(data, k = 2:6)
 print(cluster_comparison)
 }

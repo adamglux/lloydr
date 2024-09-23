@@ -18,15 +18,23 @@
 #' @export
 #' @examples
 #'
-#' data <- mtcars
-#' cluster_comparison <- compare_clusters(data, k = 2:4)
+#' data <- data.frame(x = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)),
+#'                    y = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)))
+#' cluster_comparison <- compare_clusters(data, k = 2:6)
 #' print(cluster_comparison)
 
 compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
 
   ######## input validation
   if (!is.data.frame(df)) stop("Input must be a data frame.")
-  if (!is.numeric(k) || k <= 0 || k%%1 !=0) stop("k must be a positive integer.")
+  if (any(!is.numeric(k)) || any(k <= 0) || any(k%%1 !=0)  || any(k <= 1)) {
+    stop("k must be a positive integer, greater than 1.")
+  }
+
+  if (any(k >= nrow(df))) {
+    stop("Number of clusters cannot exceed the number of data points.")
+  }
+
   if (!is.numeric(max.iter) || max.iter <= 0 || max.iter%%1 != 0) {
     stop("max.iter must be a positive integer.")
   }
@@ -48,7 +56,7 @@ compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
   cluster_df <- data.frame(distance = rep(NA, combinations),
                            k = rep(NA, combinations),
                            time = rep(NA, combinations),
-                           covergence = rep(NA, combinations),
+                           convergence = rep(NA, combinations),
                            DUNN = rep(NA, combinations))
 
   row_index <- 1
@@ -76,11 +84,18 @@ compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
      dunn_index <- round(.dunn_index(clusters, dist),5)
 
      # Fill the dataframe
-     cluster_df[row_index, ] <- c(distance = dist,
-                                  k = k_value,
-                                  time = time_taken,
-                                  convergence = clusters$iterations,
-                                  DUNN = dunn_index)
+     # cluster_df[row_index, ] <- c(distance = dist,
+     #                              k = k_value,
+     #                              time = time_taken,
+     #                              convergence = clusters$iterations,
+     #                              DUNN = dunn_index)
+
+     # assign columns
+     cluster_df[row_index, "distance"] <- dist
+     cluster_df[row_index, "k"] <- k_value
+     cluster_df[row_index, "time"] <- time_taken
+     cluster_df[row_index, "convergence"] <- clusters$iterations
+     cluster_df[row_index, "DUNN"] <- dunn_index
 
      row_index <- row_index + 1
    }
