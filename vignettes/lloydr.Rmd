@@ -5,6 +5,8 @@ vignette: >
   %\VignetteIndexEntry{lloydr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: refs.bib
+nocite: '@*'
 ---
 
 ```{r, include = FALSE}
@@ -22,14 +24,149 @@ library(lloydr)
 
 This is where some introduction is going to go. Hi. 
 
-# Background 
+# Background
 
-## Distance Measures 
+## Lloyd's Algorithm 
 
-# Functions and Methods
+Lloyd's algorithm, originally introduced by Stuart Lloyd in 1957, is a foundational method in the field of signal processing and data clustering (@lloyd_least_1982). Initially developed for optimising pulse-code modulation (PCM), the algorithm's primary goal was to minimize the distortion in signal representation by optimally placing quantization levels. Later, the algorithm was recognized for its broader applicability in clustering, particularly as a way to minimize the within-cluster variance. It is widely known now as *k*-means clustering, or just *k*-means. 
 
-# Examples
+Lloyd's algorithm operates using an iterative process, involving the assignment of data points to the nearest cluster centroids and updating these centroids based on the mean of the assigned points. This process continues until convergence, leading to the partitioning of the data into clusters that are as compact and distinct as possible. Its simplicity and effectiveness have made Lloyd's algorithm a fundamental tool in machine learning and data analysis (@morissette_k-means_2013).
 
-# Process
+*K*-means is useful in exploratory data analysis and data mining, due its computational efficiency, as well as the ability to reduce data complexity. Elements, or units are considered similar as a means of their proximity, given an input space, and different metrics can be used to measure similarities (@morissette_k-means_2013).   
+
+### Distance Measures in Lloyd's
+
+The choice of distance measure can impact the quality and appropriateness of the resulting clusters, as it affects how clusters are formed and how centroids (cluster centres) are updated. A typical similarity metric is the Euclidean distance — straight-line distance between two points in Euclidean space.
+
+### Dunn Index
+
+The Dunn Index is a metric used to evaluate the quality of clustering by measuring the ratio of the minimum inter-cluster distance to the maximum intra-cluster distance [@dunn_fuzzy_1973]. It is calculated by identifying the smallest distance between points from different clusters (inter-cluster distance) and dividing that by the largest distance between points within the same cluster (intra-cluster distance). 
+
+A higher Dunn Index indicates better clustering, with well-separated clusters and compact, dense clusters. It can be used to compare clustering results, by helping to determine the optimal number of clusters or assess the effectiveness of different clustering algorithms / distance metrics.
+
+## Potential Problems using Euclidean Distance 
+
+As a form of unsupervised machine learning, clustering problems can be difficult to track. However, various problems can be mitigated, while improvements to analysis and modelling can come from the use of different distance measures. Some problems that can occur with Euclidean distance measures include: 
+
+- sensitivity to scale: if features are on different scales (e.g., height in centimetres and weight in kilograms), the feature with the larger scale can dominate the distance calculation .
+- outliers in the data: Euclidean distance is sensitive to outliers because outliers have a large impact on the mean, which is used to update centroids.
+- different cluster shapes: Euclidean distance assumes that clusters are spherical and of similar size, which may not be true in practice (@wang_modified_2006).
+- non-Euclidean data: Euclidean distance may not be appropriate for non-Euclidean data, such as categorical data or data with complex relationships (such as text data) (@pun_unique_2007).
+- high-dimensionality (Curse of Dimensionality): In high-dimensional spaces, the Euclidean distance can become less meaningful because the distances between points tend to become similar (@khan_novel_2017).
+
+## Existing R packages / methods 
+
+The `stats` package in R [@stats_package] has a built-in method for computing *k*-means called, `kmeans()`. This function performs *k*-means clustering, and returns an object of class 'kmeans'. This method has a `fitted()` S3 method, and allows users to specify the type of algorithm used to find clusters (`algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen")`). Note: these alternative algorithms are beyond the scope of this project, but would be suitable for future research and updates to this package, later on. 
+
+Though easy to implement, this function does not allow users to change the distance measure, which means that using it on non-numeric, or outlier data can cause problems.  
+
+Another package is the `cluster` package [@clust_package] with several methods used for analysing different datasets. Of these, there is the `pam()` function which cluster around medoids [@kaufman_leonard_partitioning_1990], which can be more robust to outliers. This function allows users to specify a metric or a vector of metrics. An area of improvement for this package is increasing usability by detailing the output and class methods, which I hope to build in my package.
+
+### Future Exploration
+
+The area of *unsupervised* machine learning lives up to its namesake as an area ripe for exploration and discovery. In cluster analysis there are hierarchical methods like agglomerative and divisive, and non-hierarchical include centroid (the focus of this package), model, density, and grid based methods. Within each of these are a range of techniques. Understanding distance measures is a gateway towards unlocking the potential in each of these methods.  
+
+## Design Solution
+
+In order to address these problems, as well as discover new areas of exploration, I intend to create an R package that will utilise Lloyd's Algorithm, using pseudocode described in @morissette_k-means_2013.
+
+The goal is to address the problems above by allowing different distance metrics to address outliers, cluster shapes and non-Euclidean data. 
+  
+Users of this R package can expect to easily iterate between distance metrics using Lloyd's Algorithm. The goals of the package are:
+
+- easily change distance measures, e.g.: `distance = "Euclidean"`
+- output cluster metrics (Dunn Index, [@dunn_fuzzy_1973], clusters, centroids)
+- allow users to easily compare clusters by comparing $DI$ or processing time
+
+## Package Functions 
+
+This packages contains two functions available to the user: `calculate_clusters` and `compare_clusters`. 
+
+### Calculate clusters 
+
+This function applies Lloyd's algorithm to cluster a dataset based on a specified distance metric (e.g., Euclidean, Manhattan, Cosine, or Gower). It returns a list containing cluster assignments, centroids, sum of squares metrics, and convergence details, with optional scaling of the data before clustering.
+
+
+This function takes 3 main arguments, with another 3 set as defaults: 
+
+- `df`	A dataframe
+- `k`	 an integer number of clusters (must be > 1)
+- `distance`	A distance measure
+- `max.iter = 100`	maximum iterations for convergence
+- `tol = 1e-04`	A numeric value specifying the tolerance for convergence.
+- `scale = TRUE`	Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.
+
+Usage: 
+
+```
+library(lloydr)
+## sample data 
+set.seed(501)
+data <- data.frame(x = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)),
+                   y = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)))
+
+
+# using data scaling
+cluster_values <- calculate_clusters(df = data, k = 3, distance = "euclidean")
+
+#S3 object methods
+#print(cluster_values)
+summary(cluster_values)
+
+#plot clusters and cluster centroids for scaled data
+plot(cluster_values$data.scaled[,1], 
+     cluster_values$data.scaled[,2], 
+     col = cluster_values$cluster)
+points(cluster_values$centers, col = 1:2, pch = 8, cex = 4)
+
+# without scaling
+cluster_values <- calculate_clusters(df = data, k = 3, distance = "euclidean", scale = FALSE)
+summary(cluster_values)
+
+#plot clusters and cluster centroids for non-scaled data
+plot(cluster_values$data[,1], 
+     cluster_values$data[,2], 
+     col = cluster_values$cluster)
+points(cluster_values$centers, col = 1:2, pch = 8, cex = 4)
+
+```
+
+### Compare clusters 
+
+This function evaluates clustering results across different distance metrics and values of k for a given dataset. It returns a dataframe that summarizes metrics like computation time, convergence iterations, and the Dunn index for each combination of distance metric and cluster count.
+
+This function takes 2 main arguments, with another 3 set as defaults: 
+
+- `df`	A dataframe
+- `k`	 A vector of integers representing the desired number of clusters (must be > 1).
+- `max.iter = 100`	maximum iterations for convergence
+- `tol = 1e-04`	A numeric value specifying the tolerance for convergence.
+- `scale = TRUE`	Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.
+
+Usage: 
+
+```
+library(lloydr)
+## sample data 
+data <- data.frame(x = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)),
+                   y = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)))
+
+#compare clusters for scaled data
+cluster_comparison <- compare_clusters(data, k = 2:3)
+print(cluster_comparison)
+
+#compare clusters for non-scaled data
+cluster_comparison <- compare_clusters(data, k = 2:3, scale = FALSE)
+print(cluster_comparison)
+```
+
+
+
+____
+
+# References
+
+
+
 
 

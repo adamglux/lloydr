@@ -26,7 +26,7 @@ A dataframe containing the following columns:
 \item{DUNN}{The Dunn index for the clustering result.}
 }
 \description{
-This function compares clustering results for different distance metrics and values of `k`.
+This function evaluates clustering results across different distance metrics and values of k for a given dataset. It returns a dataframe that summarizes metrics like computation time, convergence iterations, and the Dunn index for each combination of distance metric and cluster count.
 }
 \examples{
 

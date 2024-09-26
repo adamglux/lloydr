@@ -1,6 +1,6 @@
 #' Compare Clusters
 #'
-#' @description This function compares clustering results for different distance metrics and values of `k`.
+#' @description This function evaluates clustering results across different distance metrics and values of k for a given dataset. It returns a dataframe that summarizes metrics like computation time, convergence iterations, and the Dunn index for each combination of distance metric and cluster count.
 #' @param df A dataframe containing the data to be clustered.
 #' @param k A vector of integers representing the desired number of clusters (must be > 1).
 #' @param max.iter An integer for the maximum number of iterations for convergence.

@@ -13,9 +13,9 @@ calculate_clusters(df, k, distance, max.iter = 100, tol = 1e-04, scale = TRUE)
 
 \item{distance}{A distance measure}
 
-\item{max.iter}{Set maximum iterations for convergence}
+\item{max.iter}{An integer for the maximum number of iterations for convergence.}
 
-\item{tol}{tolerance}
+\item{tol}{A numeric value specifying the tolerance for convergence.}
 
 \item{scale}{Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.}
 }
@@ -33,12 +33,37 @@ A list containing the following components:
 \item{data}{The input data with cluster assignments appended.}
 }
 \description{
-Calculate Clusters
+This function applies Lloyd's algorithm to cluster a dataset based on a specified distance metric (e.g., Euclidean, Manhattan, Cosine, or Gower). It returns a list containing cluster assignments, centroids, sum of squares metrics, and convergence details, with optional scaling of the data before clustering.
 }
 \examples{
-data <- mtcars
-cluster_values <- calculate_clusters(data,3,"euclidean")
-print(cluster_values)
+set.seed(501)
+data <- data.frame(x = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)),
+                   y = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)))
+
+
+# using data scaling
+cluster_values <- calculate_clusters(df = data, k = 3, distance = "euclidean")
+
+#S3 object methods
+#print(cluster_values)
+summary(cluster_values)
+
+#plot clusters and cluster centroids for scaled data
+plot(cluster_values$data.scaled[,1],
+     cluster_values$data.scaled[,2],
+     col = cluster_values$cluster)
+points(cluster_values$centers, col = 1:2, pch = 8, cex = 4)
+
+# without scaling
+cluster_values <- calculate_clusters(df = data, k = 3, distance = "euclidean", scale = FALSE)
+summary(cluster_values)
+
+#plot clusters and cluster centroids for non-scaled data
+plot(cluster_values$data[,1],
+     cluster_values$data[,2],
+     col = cluster_values$cluster)
+points(cluster_values$centers, col = 1:2, pch = 8, cex = 4)
+
 
 
 }
