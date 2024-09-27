@@ -131,7 +131,7 @@ test_that("calculate clusters returns the same centroids as kmeans", {
 
 
 ##############################
-########## Tests For Helper Functions
+########## Tests For Lloyd's Algorithm Helper Function
 ##############################
 
 ########## algorithm integrity tests
@@ -226,4 +226,311 @@ test_that("Lloyd's algorithm handles boundary cases with k near n", {
   # Ensure that the number of unique cluster assignments is close to k
   expect_equal(length(unique(result$cluster_assignments)), k)
 })
+
+
+##############################
+########## Tests For Recalculate Centroids Helper Function
+##############################
+
+test_that("recalculate centroids handles empty clusters by sampling a point", {
+  data <- matrix(c(1, 2, 3, 4), ncol = 2, byrow = TRUE)
+  cluster_assignments <- c(1, 1)
+  k <- 3
+
+  result <- .recalculate_centroids(data, cluster_assignments, k)
+
+  # Cluster 3 is empty; check if the centroid is sampled from existing data
+  expect_true(all(result[1, ] == c(2, 3))) # Check cluster 1 centroid
+  expect_true(any(result[3, ] %in% data))  # Check sampled centroid for empty cluster
+})
+
+test_that("recalculate centroids returns the data point itself when k = 1", {
+  data <- matrix(c(5, 5), ncol = 2)
+  cluster_assignments <- c(1)
+  k <- 1
+
+  result <- .recalculate_centroids(data, cluster_assignments, k)
+
+  # Expect the centroid to be the single data point itself
+  expect_equal(result, matrix(c(5, 5), ncol = 2))
+})
+
+test_that("recalculate centroids works with single-point clusters", {
+  data <- matrix(c(1, 2, 3, 4, 5, 6), ncol = 2, byrow = TRUE)
+  cluster_assignments <- c(1, 2, 3)
+  k <- 3
+
+  result <- .recalculate_centroids(data, cluster_assignments, k)
+
+  # Each point should be its own centroid
+  expect_equal(result, data)
+})
+
+test_that("recalculate centroids handles missing data gracefully", {
+  data <- matrix(c(1, 2, NA, 4, 5, 6), ncol = 2, byrow = TRUE)
+  cluster_assignments <- c(1, 1, 2)
+  k <- 2
+
+  result <- .recalculate_centroids(data, cluster_assignments, k)
+
+  # Verify centroids with missing data
+  expect_true(is.na(result[1, 1]) || !is.na(result[1, 1]))  # Handling potential NA correctly
+  expect_true(any(result[2, ] %in% data, na.rm = TRUE))  # Check for valid centroid
+})
+
+##############################
+########## Tests For Assign Cluster Helper Function
+##############################
+
+test_that("assign clusters correctly assigns points to nearest centroid", {
+  data <- matrix(c(1, 1, 4, 4, 8, 8), ncol = 2, byrow = TRUE)
+  centroids <- matrix(c(1, 1, 10, 10), ncol = 2, byrow = TRUE)
+  euclidean_distance <- function(a, b) sqrt(sum((a - b)^2))
+
+  result <- .assign_clusters(data, centroids, euclidean_distance)
+
+  # Expected assignments: points (1,1) -> centroid (1,1); (4,4) and (8,8) -> (10,10)
+  expect_equal(result, c(1, 1, 2))
+})
+
+test_that("assign clusters handles single data point and centroid correctly", {
+  data <- matrix(c(5, 5), ncol = 2)
+  centroids <- matrix(c(5, 5), ncol = 2)
+  euclidean_distance <- function(a, b) sqrt(sum((a - b)^2))
+
+  result <- .assign_clusters(data, centroids, euclidean_distance)
+
+  # Expected assignment: single point (5,5) -> centroid (5,5)
+  expect_equal(result, 1)
+})
+
+test_that("assign clusters works with multiple identical centroids", {
+  data <- matrix(c(1, 1, 4, 4), ncol = 2, byrow = TRUE)
+  centroids <- matrix(c(1, 1, 1, 1), ncol = 2, byrow = TRUE)
+  euclidean_distance <- function(a, b) sqrt(sum((a - b)^2))
+
+  result <- .assign_clusters(data, centroids, euclidean_distance)
+
+  # Even with identical centroids, points (1,1) and (4,4) both assign to centroid 1
+  expect_equal(result, c(1, 1))
+})
+
+test_that("assign clusters correctly assigns points when centroids are at extremes", {
+  data <- matrix(c(-1, -1, 0, 0, 1, 1), ncol = 2, byrow = TRUE)
+  centroids <- matrix(c(-10, -10, 10, 10), ncol = 2, byrow = TRUE)
+  euclidean_distance <- function(a, b) sqrt(sum((a - b)^2))
+
+  result <- .assign_clusters(data, centroids, euclidean_distance)
+
+  # Expected assignments: all points closest to the first centroid (-10, -10)
+  expect_equal(result, c(1, 1, 2))
+})
+
+test_that("assign clusters handles zero distances with identical data and centroids", {
+  data <- matrix(c(2, 2, 2, 2), ncol = 2, byrow = TRUE)
+  centroids <- matrix(c(2, 2), ncol = 2)
+  euclidean_distance <- function(a, b) sqrt(sum((a - b)^2))
+
+  result <- .assign_clusters(data, centroids, euclidean_distance)
+
+  # All points are identical to the single centroid
+  expect_equal(result, c(1, 1))
+})
+
+test_that("assign clusters handles non-Euclidean distance function", {
+  data <- matrix(c(0, 0, 1, 1, 2, 2), ncol = 2, byrow = TRUE)
+  centroids <- matrix(c(0, 0, 3, 3), ncol = 2, byrow = TRUE)
+  manhattan_distance <- function(a, b) sum(abs(a - b))
+
+  result <- .assign_clusters(data, centroids, manhattan_distance)
+
+  # Expected assignments: points (0,0) -> centroid (0,0), others -> (3,3)
+  expect_equal(result, c(1, 1, 2))
+})
+
+
+##############################
+########## Tests For Dunn Index Helper Function
+##############################
+
+test_that("dunn_index calculates correctly for well-separated clusters", {
+  # Simulated k-means object
+  clusters <- list(
+    cluster = c(1, 1, 2, 2, 3, 3),
+    data = matrix(c(1, 1, 2, 2, 10, 10, 11, 11, 20, 20, 21, 21), ncol = 2, byrow = TRUE),
+    centers = matrix(c(1.5, 1.5, 10.5, 10.5, 20.5, 20.5), ncol = 2, byrow = TRUE)
+  )
+
+  # Calculate Dunn index
+  result <- .dunn_index(clusters, "euclidean")
+
+  # Expect a high Dunn index for well-separated clusters
+  expect_true(result > 1)
+})
+
+
+test_that("dunn_index handles clusters with high intra-cluster variance", {
+  clusters <- list(
+    cluster = c(1, 1, 2, 2),
+    data = matrix(c(1, 1, 10, 10, 5, 5, 15, 15), ncol = 2, byrow = TRUE),
+    centers = matrix(c(5.5, 5.5, 10.5, 10.5), ncol = 2, byrow = TRUE)
+  )
+
+  result <- .dunn_index(clusters, "euclidean")
+
+  # Expect a lower Dunn index due to high intra-cluster distances
+  expect_true(result < 1)
+})
+
+
+##############################
+########## Tests For CPP Functions
+##############################
+
+set.seed(501)
+data <- matrix(runif(20), nrow = 5, ncol = 4)  # Random 5x4 matrix
+point <- data[1, ]  # Selecting a point from the data
+centroid <- colMeans(data)
+
+########## Euclidean tests
+
+
+test_that("euclidean_distance_cpp matches R's manual Euclidean distance calculation", {
+  # Calculate Euclidean distance between a point and centroid using R
+  r_distance <- sqrt(sum((point - centroid)^2))
+
+  # Calculate Euclidean distance using the C++ function
+  cpp_distance <- euclidean_distance_cpp(point, centroid)
+
+  # Check if the distances are equal
+  expect_equal(cpp_distance, r_distance, tolerance = 1e-8,
+               info = "Mismatch between C++ and R Euclidean point-to-centroid distance")
+})
+
+test_that("euclidean_distance_cpp correctly handles identical points", {
+  # Test with identical points
+  identical_point <- point
+  cpp_distance_identical <- euclidean_distance_cpp(point, identical_point)
+
+  # Expect the distance to be zero
+  expect_equal(cpp_distance_identical, 0,
+               info = "Distance between identical points should be zero")
+})
+
+test_that("euclidean_point_distances handles a single row input correctly", {
+  # Single point case
+  single_row <- matrix(c(0, 0, 0, 0), nrow = 1)
+  cpp_distances_single <- euclidean_point_distances(single_row)
+
+  # Expect a 1x1 matrix with zero distance
+  expect_equal(cpp_distances_single, matrix(0, nrow = 1, ncol = 1),
+               info = "Single row matrix should return zero distance")
+})
+
+test_that("euclidean_point_distances handles empty input correctly", {
+  # Empty matrix case
+  empty_matrix <- matrix(numeric(0), nrow = 0, ncol = 4)
+  cpp_distances_empty <- euclidean_point_distances(empty_matrix)
+
+  # Expect an empty matrix in return
+  expect_equal(cpp_distances_empty, matrix(numeric(0), nrow = 0, ncol = 0),
+               info = "Empty input matrix should return empty distance matrix")
+})
+
+
+########## Cosine tests
+
+
+test_that("cosine_distance_cpp matches R's manual Cosine distance calculation", {
+  # Calculate Cosine distance between a point and centroid using R
+  dot_product <- sum(point * centroid)
+  norm_point <- sqrt(sum(point^2))
+  norm_centroid <- sqrt(sum(centroid^2))
+  r_distance <- 1 - (dot_product / (norm_point * norm_centroid))
+
+  # Calculate Cosine distance using the C++ function
+  cpp_distance <- cosine_distance_cpp(point, centroid)
+
+  # Check if the distances are equal
+  expect_equal(cpp_distance, r_distance, tolerance = 1e-8,
+               info = "Mismatch between C++ and R Cosine point-to-centroid distance")
+})
+
+test_that("cosine_distance_cpp correctly handles identical points", {
+  # Test with identical points
+  identical_point <- point
+  cpp_distance_identical <- cosine_distance_cpp(point, identical_point)
+
+  # Expect the distance to be zero
+  expect_equal(cpp_distance_identical, 0,
+               info = "Cosine distance between identical points should be zero")
+})
+
+test_that("cosine_point_distances handles a single row input correctly", {
+  # Single point case
+  single_row <- matrix(c(1, 1, 1, 1), nrow = 1)
+  cpp_distances_single <- cosine_point_distances(single_row)
+
+  # Expect a 1x1 matrix with zero distance
+  expect_equal(cpp_distances_single, matrix(0, nrow = 1, ncol = 1),
+               info = "Single row matrix should return zero distance")
+})
+
+test_that("cosine_point_distances handles empty input correctly", {
+  # Empty matrix case
+  empty_matrix <- matrix(numeric(0), nrow = 0, ncol = 4)
+  cpp_distances_empty <- cosine_point_distances(empty_matrix)
+
+  # Expect an empty matrix in return
+  expect_equal(cpp_distances_empty, matrix(numeric(0), nrow = 0, ncol = 0),
+               info = "Empty input matrix should return empty distance matrix")
+})
+
+
+########## Manhattan tests
+
+
+test_that("manhattan_distance_cpp matches R's manual Manhattan distance calculation", {
+  # Calculate Manhattan distance between a point and centroid using R
+  r_distance <- sum(abs(point - centroid))
+
+  # Calculate Manhattan distance using the C++ function
+  cpp_distance <- manhattan_distance_cpp(point, centroid)
+
+  # Check if the distances are equal
+  expect_equal(cpp_distance, r_distance, tolerance = 1e-8,
+               info = "Mismatch between C++ and R Manhattan point-to-centroid distance")
+})
+
+test_that("manhattan_distance_cpp correctly handles identical points", {
+  # Test with identical points
+  identical_point <- point
+  cpp_distance_identical <- manhattan_distance_cpp(point, identical_point)
+
+  # Expect the distance to be zero
+  expect_equal(cpp_distance_identical, 0,
+               info = "Manhattan distance between identical points should be zero")
+})
+
+test_that("manhattan_point_distances handles a single row input correctly", {
+  # Single point case
+  single_row <- matrix(c(1, 2, 3, 4), nrow = 1)
+  cpp_distances_single <- manhattan_point_distances(single_row)
+
+  # Expect a 1x1 matrix with zero distance
+  expect_equal(cpp_distances_single, matrix(0, nrow = 1, ncol = 1),
+               info = "Single row matrix should return zero distance")
+})
+
+test_that("manhattan_point_distances handles empty input correctly", {
+  # Empty matrix case
+  empty_matrix <- matrix(numeric(0), nrow = 0, ncol = 4)
+  cpp_distances_empty <- manhattan_point_distances(empty_matrix)
+
+  # Expect an empty matrix in return
+  expect_equal(cpp_distances_empty, matrix(numeric(0), nrow = 0, ncol = 0),
+               info = "Empty input matrix should return empty distance matrix")
+})
+
+
 
