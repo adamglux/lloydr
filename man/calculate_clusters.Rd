@@ -11,7 +11,7 @@ calculate_clusters(df, k, distance, max.iter = 100, tol = 1e-04, scale = TRUE)
 
 \item{k}{an integer number of clusters (must be > 1)}
 
-\item{distance}{A distance measure}
+\item{distance}{A distance measure from one of: {"Euclidean", "Manhattan", "Cosine", or "Gower"}}
 
 \item{max.iter}{An integer for the maximum number of iterations for convergence.}
 
