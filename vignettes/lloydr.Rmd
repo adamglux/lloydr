@@ -36,7 +36,33 @@ Lloyd's algorithm operates using an iterative process, involving the assignment 
 
 ### Distance Measures in Lloyd's
 
-The choice of distance measure can impact the quality and appropriateness of the resulting clusters, as it affects how clusters are formed and how centroids (cluster centres) are updated. A typical similarity metric is the Euclidean distance — straight-line distance between two points in Euclidean space.
+The choice of distance measure can impact the quality and appropriateness of the resulting clusters, as it affects how clusters are formed and how centroids (cluster centres) are updated. A typical similarity metric is the Euclidean distance — straight-line distance between two points in Euclidean space — is given by: 
+
+$$dE = \sqrt{\sum^n_{i=1}(c_i-x_i)^2}$$
+Where *c* is the cluster centre, *x* is the comparison point at *i*, for all *k* units. 
+
+### Alternative Distances Used in `lloydr` package
+
+There are numerous distance measures, each designed to capture different aspects of similarity or dissimilarity between data points based on the type of data. While Euclidean distance measures the straight-line distance between points in a continuous space, Manhattan distance sums the absolute differences between coordinates, emphasizing grid-like paths. Cosine distance, in contrast, measures the angle between vectors, focusing on orientation rather than magnitude, making it suitable for text or high-dimensional data. Gower distance is particularly versatile, allowing for a combination of numerical, categorical, and binary variables by normalizing and aggregating individual component distances. 
+
+While many distance measures exist to suit many different purposes, the four above are highlighted and available in this function. They are measured by: 
+
+- Manhattan Distance (L1 Norm), the sum of the absolute differences between corresponding coordinates of points. 
+
+$$dE = \sum_{i=1}^{n} |c_i - x_i|$$
+
+- Cosine Distance, the angle between two non-zero vectors, emphasizing the orientation rather than magnitude.
+
+$$Cd = 1 - \frac{\sum_{i=1}^{n} c_i x_i}{\sqrt{\sum_{i=1}^{n} x_i^2} \times \sqrt{\sum_{i=1}^{n} c_i^2}} ]$$
+
+- Gower Distance, combines different types of variables (numerical, categorical, binary) by calculating the distance for each variable type and averaging.
+
+$$Gd = S_{ij}= \frac{\sum^n_{i=1}w_{ijk}s_{ijk}}{\sum^n_{i=1}w_{ijk}}$$
+
+For two objects *i* and *j* have *p* descriptors, where $w_{ijk}$ are non-negative weights usually set to 1 and $s_{ijk}$ is the similarity between the two objects regarding their *k*-th variable. If the variable is binary or ordinal, the values of $s_{ijk}$ are 0 or 1, with 1 denoting equality. If the variable is continuous, $s_{ijk} = 1 - \frac{|x_i - x_j|}{R_k}$ with $R_k$ being the range of the *k*-th variable [@noauthor_gowers_2024].
+
+These distance measures are crucial because they highlight different dimensions of data, affecting how patterns, clusters, or relationships are identified, and the choice of distance metric can significantly impact the results of analysis, especially in clustering, classification, and recommendation systems.
+
 
 ### Dunn Index
 
@@ -78,7 +104,7 @@ Users of this R package can expect to easily iterate between distance metrics us
 - output cluster metrics (Dunn Index, [@dunn_fuzzy_1973], clusters, centroids)
 - allow users to easily compare clusters by comparing $DI$ or processing time
 
-## Package Functions 
+# Package Functions 
 
 This packages contains two functions available to the user: `calculate_clusters` and `compare_clusters`. 
 

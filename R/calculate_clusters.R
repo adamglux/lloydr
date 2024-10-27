@@ -4,7 +4,7 @@
 #' @description This function applies Lloyd's algorithm to cluster a dataset based on a specified distance metric (e.g., Euclidean, Manhattan, Cosine, or Gower). It returns a list containing cluster assignments, centroids, sum of squares metrics, and convergence details, with optional scaling of the data before clustering.
 #' @param df A dataframe
 #' @param k an integer number of clusters (must be > 1)
-#' @param distance A distance measure, from one of: {"Euclidean", "Manhattan", "Cosine", "Gower"}. Note: this parameter is not case sensitive, i.e. "euclidean" and "Euclidean" will obtain the same results.
+#' @param distance A distance measure, from one of: {"Euclidean", "Manhattan", "Cosine", "Gower"}, with no default. Note: this parameter is not case sensitive, i.e. "euclidean" and "Euclidean" will obtain the same results.
 #' @param max.iter An integer for the maximum number of iterations for convergence.
 #' @param tol A numeric value specifying the tolerance for convergence.
 #' @param scale Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.
