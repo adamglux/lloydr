@@ -533,4 +533,36 @@ test_that("manhattan_point_distances handles empty input correctly", {
 })
 
 
+##############################
+########## Tests For Mixed Dataset
+##############################
+
+# Load necessary libraries
+data("HairEyeColor")
+
+# Convert the HairEyeColor dataset to a data frame
+dataset <- as.data.frame(HairEyeColor)
+
+# Test for calculate_clusters function
+test_that("calculate_clusters works correctly", {
+  set.seed(12)
+  clust4 <- calculate_clusters(dataset, 4, distance = "gower", max.iter = 1000)
+
+  # Assertions
+  expect_equal(clust4$totss, 16.8044, tolerance = 1e-3)
+})
+
+# Test for compare_clusters function
+test_that("compare_clusters works correctly", {
+  set.seed(1234)
+  compare <- compare_clusters(dataset, 4, max.iter = 10000)
+
+  # the exact output format is not provided, so we check specific properties
+  expect_true(nrow(compare) > 0) # Check if the comparison returns rows
+  expect_true(all(compare$k > 0)) # Check that all k values are positive
+  expect_true("time" %in% colnames(compare)) # Check if the computation_time column exists
+  expect_true("DUNN" %in% colnames(compare)) # Check if the dunn_index column exists
+})
+
+
 
