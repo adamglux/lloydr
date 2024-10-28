@@ -18,10 +18,16 @@ knitr::opts_chunk$set(
 
 ## Packages
 
+```{r include=FALSE}
+packages <- c("dplyr", "ggplot2", "ggpubr", "ggmosaic")
+to_install <- packages[!(packages %in% installed.packages()[,"Package"])]
+if (length(to_install)) install.packages(to_install)
+```
+
+
 ```{r message=FALSE, warning=FALSE}
 library(lloydr)
 library(dplyr)
-library(pROC)
 library(ggplot2)
 library(ggpubr)
 library(ggmosaic)

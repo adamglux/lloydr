@@ -2,7 +2,7 @@
 #'
 #' @description This function evaluates clustering results across different distance metrics and values of k for a given dataset. It returns a dataframe that summarizes metrics like computation time, convergence iterations, and the Dunn index for each combination of distance metric and cluster count.
 #' @param df A dataframe containing the data to be clustered.
-#' @param k A vector of integers representing the desired number of clusters (must be > 1).
+#' @param k A vector of integers representing the desired number of clusters (must be less than 1).
 #' @param max.iter An integer for the maximum number of iterations for convergence.
 #' @param tol A numeric value specifying the tolerance for convergence.
 #' @param scale Logical. If TRUE, scales the data before clustering; if FALSE, does not scale.
@@ -22,6 +22,22 @@
 #'                    y = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)))
 #' cluster_comparison <- compare_clusters(data, k = 2:6)
 #' print(cluster_comparison)
+#'
+#' ######
+#' ###### Hair Eye Colour Dataset (mixed data) example
+#' ######
+#'
+#' ### note: see vignettes for side-by-side comparison plots, and commentary.
+#'
+#' #load HairEyeColor dataset:
+#' data("HairEyeColor")
+#' summary(HairEyeColor)
+#' dataset <- as.data.frame(HairEyeColor)
+#' summary(dataset)
+#'
+#' set.seed(1234)
+#' compare <- compare_clusters(dataset, 4, max.iter = 10000)
+#' print(compare)
 
 compare_clusters <- function(df, k, max.iter = 100, tol = 1e-4, scale = TRUE) {
 

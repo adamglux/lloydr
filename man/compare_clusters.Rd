@@ -9,7 +9,7 @@ compare_clusters(df, k, max.iter = 100, tol = 1e-04, scale = TRUE)
 \arguments{
 \item{df}{A dataframe containing the data to be clustered.}
 
-\item{k}{A vector of integers representing the desired number of clusters (must be > 1).}
+\item{k}{A vector of integers representing the desired number of clusters (must be less than 1).}
 
 \item{max.iter}{An integer for the maximum number of iterations for convergence.}
 
@@ -34,4 +34,20 @@ data <- data.frame(x = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)),
                    y = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)))
 cluster_comparison <- compare_clusters(data, k = 2:6)
 print(cluster_comparison)
+
+######
+###### Hair Eye Colour Dataset (mixed data) example
+######
+
+### note: see vignettes for side-by-side comparison plots, and commentary.
+
+#load HairEyeColor dataset:
+data("HairEyeColor")
+summary(HairEyeColor)
+dataset <- as.data.frame(HairEyeColor)
+summary(dataset)
+
+set.seed(1234)
+compare <- compare_clusters(dataset, 4, max.iter = 10000)
+print(compare)
 }

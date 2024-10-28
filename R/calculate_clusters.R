@@ -3,7 +3,7 @@
 #'
 #' @description This function applies Lloyd's algorithm to cluster a dataset based on a specified distance metric (e.g., Euclidean, Manhattan, Cosine, or Gower). It returns a list containing cluster assignments, centroids, sum of squares metrics, and convergence details, with optional scaling of the data before clustering.
 #' @param df A dataframe
-#' @param k an integer number of clusters (must be > 1)
+#' @param k an integer number of clusters (must be less than 1)
 #' @param distance A distance measure, from one of: {"Euclidean", "Manhattan", "Cosine", "Gower"}, with no default. Note: this parameter is not case sensitive, i.e. "euclidean" and "Euclidean" will obtain the same results.
 #' @param max.iter An integer for the maximum number of iterations for convergence.
 #' @param tol A numeric value specifying the tolerance for convergence.
@@ -25,6 +25,11 @@
 #' @export
 #'
 #' @examples
+#'
+#' ######
+#' ###### Simple Randomly Generated Dataset
+#' ######
+#'
 #' set.seed(501)
 #' data <- data.frame(x = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)),
 #'                    y = c(rnorm(20), rnorm(20,10,5), rnorm(20, 20, 5)))
@@ -52,6 +57,107 @@
 #'      cluster_values$data[,2],
 #'      col = cluster_values$cluster)
 #' points(cluster_values$centers, col = 1:2, pch = 8, cex = 4)
+#'
+#'
+#' ######
+#' ###### Hair Eye Colour Dataset example
+#' ######
+#'
+#' ### note: see vignettes for side-by-side comparison plots, and commentary.
+#'
+#' ######
+#' ###### dataset
+#' ######
+#'
+#' data("HairEyeColor")
+#' summary(HairEyeColor)
+#' dataset <- as.data.frame(HairEyeColor)
+#' summary(dataset)
+#'
+#' ######
+#' ###### plot hair / eye distributions
+#' ######
+#'
+#' hair_eye_table <- with(dataset, tapply(Freq, list(Hair, Eye), sum))
+#' # Set custom colors
+#' colours_p <- c("#593722", "#6385b1", "#a58454", "#637f19" )
+#' # Create the bar plot
+#' barplot(hair_eye_table,
+#'         beside = TRUE,               # Bars side by side
+#'         col = colours_p,            # Fill colors
+#'         main = "Hair and Eye Color Distribution",  # Title
+#'         xlab = "Hair Color",         # X-axis label
+#'         ylab = "Count",              # Y-axis label
+#'         legend.text = colnames(hair_eye_table),  # Add legend for eye colors
+#'         args.legend = list(x = "topright", bty = "n"))
+#'
+#' ######
+#' ###### calculate clusters
+#' ######
+#'
+#' set.seed(1234)
+#' clust1 <- calculate_clusters(dataset,4, distance = "euclidean")
+#' print(clust1)
+#' clust2 <- calculate_clusters(dataset,4, distance = "manhattan")
+#' print(clust2)
+#' clust3 <- calculate_clusters(dataset,4, distance = "cosine")
+#' print(clust3)
+#' clust4 <- calculate_clusters(dataset,4, distance = "gower", max.iter = 1000)
+#' print(clust4)
+#'
+#' ######
+#' ###### append dataset
+#' ######
+#'
+#' dataset$cluster1 <- clust1$cluster
+#' dataset$cluster2 <- clust2$cluster
+#' dataset$cluster3 <- clust3$cluster
+#' dataset$cluster4 <- clust4$cluster
+#'
+#' ######
+#' ###### plot the results
+#' ######
+#'
+#' ## results for euclidean cluster
+#' hair_cluster_table <- with(dataset, tapply(Freq, list(Hair, factor(cluster1)), sum))
+#' barplot(hair_cluster_table,
+#'         beside = TRUE, col = colours_p,
+#'         main = "Cluster Distribution",
+#'         xlab = "Hair Color", ylab = "Count",
+#'         legend.text = colnames(hair_cluster_table),
+#'         args.legend = list(x = "topright", bty = "n"))
+#'
+#'
+#' ## results for manhattan cluster
+#' hair_cluster_table <- with(dataset, tapply(Freq, list(Hair, factor(cluster2)), sum))
+#' barplot(hair_cluster_table,
+#'         beside = TRUE, col = colours_p,
+#'         main = "Cluster Distribution",
+#'         xlab = "Hair Color", ylab = "Count",
+#'         legend.text = colnames(hair_cluster_table),
+#'         args.legend = list(x = "topright", bty = "n"))
+#'
+#' ## results for cosine cluster
+#' hair_cluster_table <- with(dataset, tapply(Freq, list(Hair, factor(cluster3)), sum))
+#' barplot(hair_cluster_table,
+#'         beside = TRUE, col = colours_p,
+#'         main = "Cluster Distribution",
+#'         xlab = "Hair Color", ylab = "Count",
+#'         legend.text = colnames(hair_cluster_table),
+#'         args.legend = list(x = "topright", bty = "n"))
+#'
+#' ## results for gower cluster
+#' hair_cluster_table <- with(dataset, tapply(Freq, list(Hair, factor(cluster4)), sum))
+#' barplot(hair_cluster_table,
+#'         beside = TRUE, col = colours_p,
+#'         main = "Cluster Distribution",
+#'         xlab = "Hair Color", ylab = "Count",
+#'         legend.text = colnames(hair_cluster_table),
+#'         args.legend = list(x = "topright", bty = "n"))
+#'
+#'
+#'
+#'
 #'
 #'
 #'
