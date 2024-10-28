@@ -18,14 +18,9 @@ knitr::opts_chunk$set(
 
 ## Packages
 
-```{r include=FALSE}
-packages <- c("dplyr", "ggplot2", "ggpubr", "ggmosaic")
-to_install <- packages[!(packages %in% installed.packages()[,"Package"])]
-if (length(to_install)) install.packages(to_install)
-```
 
-
-```{r message=FALSE, warning=FALSE}
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
+#suggested packages
 library(lloydr)
 library(dplyr)
 library(ggplot2)
@@ -38,11 +33,15 @@ library(ggmosaic)
 
 The majority of use-cases and examples for this package include datasets derived from random data generators using built in random distributions, such as `rnorm()`. This use-case will employ the `HairEyeColor` dataset provided in the R `datasets` package [@datasets]. As this is a toy-example, meant to test and explore the capabilities of the `lloydr` package, stringent analytical methodologies will be ignored in favour of a more casual approach that simply tests features and explores output. 
 
-**Use this as a springboard to dive deeper and explore further!** 
+### Use this as a springboard to dive deeper and explore further! 
+
+**please note:** Plots used in this report which have been created with `ggplot2` have been reproduced and included here as images. All other code is included here. For more, see help files for `calculate_clusters`
 
 ## Load and inspect dataset
 
-```{r echo=FALSE}
+```{r}
+library(lloydr)
+
 data("HairEyeColor")
 summary(HairEyeColor)
 dataset <- as.data.frame(HairEyeColor)
@@ -64,51 +63,14 @@ Instead, we can check our clustering by assignment. We'll try to visualise our c
 
 ### Plot Grouped and Separated (by sex) Data
 
-```{r echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-data("HairEyeColor")
-summary(HairEyeColor)
-dataset <- as.data.frame(HairEyeColor)
-summary(dataset)
+![Grouped Data](000014.png) 
+![Hair and Eye by Sex](000016.png) 
 
-
-#set up a colour palette
-colours_p <- c("#593722", "#6385b1", "#a58454", "#637f19" )
-
-
-#### Hair Eye Colour (combined M & F)
-ggplot(dataset) +
-  geom_mosaic(aes(x = product(Eye, Hair), fill = Eye, weight = Freq), show.legend = FALSE) + 
-   scale_fill_manual(values = colours_p) +  
-  labs(title = 'Hair and Eye Color Grouped', 
-    caption = 'Source: HairEyeColor dataset (R)') +
-  theme_minimal()
-
-
-#### Hair Eye Colour (separated M & F)
-ggplot(dataset) +
-  geom_mosaic(aes(x = product(Eye, Hair), fill = Eye, weight = Freq), show.legend = FALSE) + 
-   scale_fill_manual(values = colours_p) +  
-  labs(title = 'Hair and Eye Color by Sex', 
-    caption = 'Source: HairEyeColor dataset (R)') +
-  facet_wrap(~ factor(Sex, levels = c("Female", "Male"))) +
-  theme_minimal()
-
-```
 Next, we'll plot these by frequencies, to see the numbers of observations in each category of hair, coloured by eye: 
 
 ### Frequency Distributions 
 
-```{r echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-
-# stacked bar plot
-ggplot(dataset, aes(x = Hair, y = Freq, fill = Eye)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Hair and Eye Color Distribution",
-       x = "Hair Color",
-       y = "Count") +
-  scale_fill_manual(values = colours_p) +  # Use a color palette for eye colors
-  theme_minimal()
-```
+![Hair and Eye distribution](0000121.png) 
 
 Okay, great. Now we can run the `calculate_clusters` function to get cluster assignment, and use those to compare by hair / eye, using the plot above.  
 
@@ -123,42 +85,7 @@ print(clust1)
 ```
 Let's plot this and compare cluster assignment to eye colour: 
 
-```{r echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-
-cluster_plot <- dataset %>% 
-  mutate(cluster = clust1$cluster) %>%
-# stacked bar plot
-ggplot(aes(x = Hair, y = Freq, fill = factor(cluster))) +
-  geom_bar(stat = "identity") +
-  labs(title = "Cluster Distribution",
-       x = "Hair Color",
-       y = "Count") +
-  scale_fill_manual(values = colours_p, name = "Clusters") +  
-  #scale_fill_discrete(name = "Clusters") +
-  theme_minimal()
-
-
-ordinary <- ggplot(dataset, aes(x = Hair, y = Freq, fill = Eye)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Hair and Eye Color Distribution",
-       x = "Hair Color",
-       y = "Count") +
-   scale_fill_manual(values = colours_p) + 
-  theme_minimal()
-
-
-ggarrange(
-  cluster_plot, 
-  ordinary, 
-  ncol = 2, 
-  nrow = 1, 
-  common.legend = TRUE, 
-  legend = "bottom",
-  align = "v"
-  #widths = c(1, 1.5)  # Adjust the widths so the plot with longer labels has more space
-)
-
-```
+![Hair and Eye with Euclidean distance](euc.png) 
 
 Okay, this doesn't look right, but it's not terrible. For black hair, we could change the colour assignments and see a roughly similar proportion of eye colour. Brown hair is way off. As is red. Blond isn't right either, but the small amount of brown suggests that something is working.  
 
@@ -170,42 +97,8 @@ clust2 <- calculate_clusters(dataset,4, distance = "manhattan")
 print(clust2)
 ```
 
+![Hair and Eye with manhattan distance](man.png) 
 
-```{r echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-cluster_plot <- dataset %>% 
-  mutate(cluster = clust2$cluster) %>%
-# stacked bar plot
-ggplot(aes(x = Hair, y = Freq, fill = factor(cluster))) +
-  geom_bar(stat = "identity") +
-  labs(title = "Cluster Distribution",
-       x = "Hair Color",
-       y = "Count") +
-  scale_fill_manual(values = colours_p, name = "Clusters") +  
-  #scale_fill_discrete(name = "Clusters") +
-  theme_minimal()
-
-
-ordinary <- ggplot(dataset, aes(x = Hair, y = Freq, fill = Eye)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Hair and Eye Color Distribution",
-       x = "Hair Color",
-       y = "Count") +
-   scale_fill_manual(values = colours_p) + 
-  theme_minimal()
-
-
-ggarrange(
-  cluster_plot, 
-  ordinary, 
-  ncol = 2, 
-  nrow = 1, 
-  common.legend = TRUE, 
-  legend = "bottom",
-  align = "v"
-  #widths = c(1, 1.5)  # Adjust the widths so the plot with longer labels has more space
-)
-
-```
 
 This one is worse. Let's have a look at *cosine*: 
 
@@ -216,40 +109,7 @@ print(clust3)
 
 ```
 
-```{r echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-cluster_plot <- dataset %>% 
-  mutate(cluster = clust3$cluster) %>%
-# stacked bar plot
-ggplot(aes(x = Hair, y = Freq, fill = factor(cluster))) +
-  geom_bar(stat = "identity") +
-  labs(title = "Cluster Distribution",
-       x = "Hair Color",
-       y = "Count") +
-  scale_fill_manual(values = colours_p, name = "Clusters") +  
-  #scale_fill_discrete(name = "Clusters") +
-  theme_minimal()
-
-
-ordinary <- ggplot(dataset, aes(x = Hair, y = Freq, fill = Eye)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Hair and Eye Color Distribution",
-       x = "Hair Color",
-       y = "Count") +
-   scale_fill_manual(values = colours_p) + 
-  theme_minimal()
-
-
-ggarrange(
-  cluster_plot, 
-  ordinary, 
-  ncol = 2, 
-  nrow = 1, 
-  common.legend = TRUE, 
-  legend = "bottom",
-  align = "v"
-  #widths = c(1, 1.5)  # Adjust the widths so the plot with longer labels has more space
-)
-```
+![Hair and Eye with cosine distance](cos.png) 
 
 This one isn't too different from *euclidean*. If we changed the labels in black hair, that column might look okay. Also, notice that blond has a small sliver of brown eyes, which is also on the right track. 
 
@@ -261,40 +121,7 @@ clust4 <- calculate_clusters(dataset,4, distance = "gower", max.iter = 1000)
 print(clust4)
 ```
 
-```{r echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-cluster_plot <- dataset %>% 
-  mutate(cluster = clust4$cluster) %>%
-# stacked bar plot
-ggplot(aes(x = Hair, y = Freq, fill = factor(cluster))) +
-  geom_bar(stat = "identity") +
-  labs(title = "Cluster Distribution",
-       x = "Hair Color",
-       y = "Count") +
-  scale_fill_manual(values = colours_p, name = "Clusters") +  
-  #scale_fill_discrete(name = "Clusters") +
-  theme_minimal()
-
-
-ordinary <- ggplot(dataset, aes(x = Hair, y = Freq, fill = Eye)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Hair and Eye Color Distribution",
-       x = "Hair Color",
-       y = "Count") +
-   scale_fill_manual(values = colours_p) + 
-  theme_minimal()
-
-
-ggarrange(
-  cluster_plot, 
-  ordinary, 
-  ncol = 2, 
-  nrow = 1, 
-  common.legend = TRUE, 
-  legend = "bottom",
-  align = "v"
-  #widths = c(1, 1.5)  # Adjust the widths so the plot with longer labels has more space
-)
-```
+![Hair and Eye with Gower distance](cos.png) 
 
 This one isn't perfect either, but it's on the right track. The size of the brown-eyes levels for each hair colour is closer to the observed colours. Blue eyes are also roughly consistent with blond and brown hair. Green eyes are absent in all but one hair colour, so that's an example of where some inconsistencies apply. 
 ## Compare Clusters 
@@ -323,41 +150,7 @@ clust5 <- calculate_clusters(data_nosex,2, distance = "manhattan", max.iter = 10
 print(clust5)
 ```
 
-```{r echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-#### Hair Eye Colour (separated M & F)
-ordinary <- ggplot(dataset) +
-  geom_mosaic(aes(x = product(Eye, Hair), fill = Eye, weight = Freq), show.legend = FALSE) + 
-   scale_fill_manual(values = colours_p) +  
-  labs(title = 'Hair and Eye Color by Sex', 
-    caption = 'Source: HairEyeColor dataset (R)') +
-  facet_wrap(~ factor(Sex, levels = c("Female", "Male"))) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust=1)) 
-
-
-cluster_plot <- dataset %>% 
-  mutate(cluster = clust5$cluster) %>%
-ggplot() +
-  geom_mosaic(aes(x = product(Eye, Hair), fill = Eye, weight = Freq), show.legend = FALSE) + 
-   scale_fill_manual(values = colours_p) +  
-  labs(title = 'Cluster by Sex', 
-    caption = 'Source: HairEyeColor dataset (R)') +
-  facet_wrap(~ factor(cluster)) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust=1)) 
-
-
-ggarrange(
-  cluster_plot, 
-  ordinary, 
-  ncol = 2, 
-  nrow = 1, 
-  common.legend = TRUE, 
-  legend = "bottom",
-  align = "v"
-  #widths = c(1, 1.5)  # Adjust the widths so the plot with longer labels has more space
-)
-```
+![Hair and Eye by Sex with Manhattan distance](eusex.png) 
 
 ```{r}
 set.seed(123)
@@ -366,42 +159,9 @@ clust6 <- calculate_clusters(data_nosex,2, distance = "gower", max.iter = 1000)
 print(clust6)
 ```
 
-```{r echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-#### Hair Eye Colour (separated M & F)
-ordinary <- ggplot(dataset) +
-  geom_mosaic(aes(x = product(Eye, Hair), fill = Eye, weight = Freq), show.legend = FALSE) + 
-   scale_fill_manual(values = colours_p) +  
-  labs(title = 'Hair and Eye Color by Sex', 
-    caption = 'Source: HairEyeColor dataset (R)') +
-  facet_wrap(~ factor(Sex, levels = c("Female", "Male"))) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust=1)) 
+![Hair and Eye by Sex with Gower distance](gowsex.png) 
 
 
-cluster_plot <- dataset %>% 
-  mutate(cluster = clust6$cluster) %>%
-ggplot() +
-  geom_mosaic(aes(x = product(Eye, Hair), fill = Eye, weight = Freq), show.legend = FALSE) + 
-   scale_fill_manual(values = colours_p) +  
-  labs(title = 'Cluster by Sex', 
-    caption = 'Source: HairEyeColor dataset (R)') +
-  facet_wrap(~ factor(cluster)) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust=1)) 
-  
-
-
-ggarrange(
-  cluster_plot, 
-  ordinary, 
-  ncol = 2, 
-  nrow = 1, 
-  common.legend = TRUE, 
-  legend = "bottom",
-  align = "v"
-  #widths = c(1, 1.5)  # Adjust the widths so the plot with longer labels has more space
-)
-```
 
 Okay, wow. Neither of them did spectacularly well, but clearly *gower* distance is on the right track. 
 
