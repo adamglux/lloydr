@@ -88,28 +88,22 @@ Though easy to implement, this function does not allow users to change the dista
 
 Another package is the `cluster` package [@clust_package] with several methods used for analysing different datasets. Of these, there is the `pam()` function which cluster around medoids [@kaufman_leonard_partitioning_1990], which can be more robust to outliers. This function allows users to specify a metric or a vector of metrics. An area of improvement for this package is increasing usability by detailing the output and class methods, which I hope to build in my package.
 
-### Future Exploration
-
-The area of *unsupervised* machine learning lives up to its namesake as an area ripe for exploration and discovery. In cluster analysis there are hierarchical methods like agglomerative and divisive, and non-hierarchical include centroid (the focus of this package), model, density, and grid based methods. Within each of these are a range of techniques. Understanding distance measures is a gateway towards unlocking the potential in each of these methods.  
 
 ## Design Solution
 
-In order to address these problems, as well as discover new areas of exploration, I intend to create an R package that will utilise Lloyd's Algorithm, using pseudocode described in @morissette_k-means_2013.
-
-The goal is to address the problems above by allowing different distance metrics to address outliers, cluster shapes and non-Euclidean data. 
+The goal in this package is to address the problems above by allowing different distance metrics to address outliers, cluster shapes and non-Euclidean data. 
   
 Users of this R package can expect to easily iterate between distance metrics using Lloyd's Algorithm. The goals of the package are:
 
-- easily change distance measures, e.g.: `distance = "Euclidean"`
-- output cluster metrics (Dunn Index, [@dunn_fuzzy_1973], clusters, centroids)
-- allow users to easily compare clusters by comparing $DI$ or processing time
+- easily change distance measures by setting: `distance = "Euclidean"`
+- output cluster metrics (clusters, centroids)
+- allow users to easily compare clusters by comparing Dunn Index, [@dunn_fuzzy_1973] or processing time
 
 # Package Functions 
 
 This packages contains two functions available to the user: `calculate_clusters` and `compare_clusters`. 
 
 **please note**: more examples can be found in help files and along with supplementary vignettes.
-
 
 ### Calculate clusters 
 
@@ -189,7 +183,9 @@ cluster_comparison <- compare_clusters(data, k = 2:3, scale = FALSE)
 print(cluster_comparison)
 ```
 
+### Future Exploration
 
+The area of *unsupervised* machine learning lives up to its namesake as an area ripe for exploration and discovery. In cluster analysis there are hierarchical methods like agglomerative and divisive, and non-hierarchical include centroid (the focus of this package), model, density, and grid based methods. Within each of these are a range of techniques. Understanding distance measures is a gateway towards unlocking the potential in each of these methods.  
 
 ____
 
